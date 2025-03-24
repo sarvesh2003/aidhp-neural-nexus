@@ -11,3 +11,7 @@ transformers
 accelerate
 bitsandbytes
 langchain
+faker
+openpyxl 
+pinecone
+sentence-transformers

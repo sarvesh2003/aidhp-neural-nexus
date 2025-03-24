@@ -1,6 +1,9 @@
 # Api keys
 code/src/apiKey/
 
+# Trash files
+code/src/data/trashFiles/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
