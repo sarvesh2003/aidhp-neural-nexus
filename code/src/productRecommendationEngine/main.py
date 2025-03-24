@@ -11,9 +11,6 @@ print(df.head(4)['queryFormat'][0])
 # for _, row in df.iterrows():
 #     documents.append(Document(row['queryFormat'], metadata={"class": row["Age"]}))
 
-# https://www.youtube.com/watch?v=KXFupEkZtQo&list=PLYIE4hvbWhsDECKjDueeAlIA_oDswYmIg&index=4
-
 
 # For every query by the user, try to include some product recommendations if possible
-
 df.to_csv('../data/enriched_accounts_new_with_queryFormat.csv')
