@@ -52,9 +52,12 @@ def generateChatBotResponse(question):
     return result
 
 
-# # Sample calls
-# generateChatBotResponse("who will win IPL 2025 ? CSK or MI ?")
-# print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
-# generateChatBotResponse("Is it better to invest in FD or Large Cap funds if I am going to retire after 35 years ?")
-# print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
-# generateChatBotResponse("Which is the best stock for March 2025?")
+# Sample calls
+generateChatBotResponse("who will win IPL 2025 ? CSK or MI ?")
+print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
+generateChatBotResponse("Is it better to invest in FD or Large Cap funds if I am going to retire after 35 years ?")
+print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
+generateChatBotResponse("Which is the best stock for March 2025?")
+
+
+# NOTE: THIS IS JUST A STATELESS LLM CHAIN. IT DOES NOT STORE ANY STATE.
