@@ -1,3 +1,10 @@
+# askQuestion(question) function is used in the chatbot section of the app. Whenever the user enters a query in the input box and clicks on the submit button, the askQuestion function is called. 
+# The function takes the user's question as input and performs the following steps:
+#   - Chatbot answers the question
+#   - The interaction is summarized
+#   - Based on the summary, the similar products are queried from the vector database  - Product Recommendations
+# Along with answering the question, it also generates a set of product recommendations related to that query
+
 from deepseek_chatbot import generateDeepSeekChatBotResponse
 from mistral_chatbot import generateChatBotResponse
 from sentence_transformers import SentenceTransformer
@@ -8,7 +15,7 @@ def askQuestion(question):
     # Query 1
     answer = generateDeepSeekChatBotResponse(question)
     print("Answer by DeepSeek Chatbot: ")
-    print(answer) # take this answer and display in ui
+    print(answer)
     # Query 2
     prompt = f'''
             THE USER ASKED: {question} and THE CHATBOT answered: {answer}. Summarize this into a single paragraph

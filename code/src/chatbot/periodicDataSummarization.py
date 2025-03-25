@@ -1,3 +1,12 @@
+# The periodicSummaryUpdate() function updates the transaction summaries (both credit and debit) for each user periodically. 
+# Based on those transaction summaries, we can recommend products to the user (If someone makes many luxury transaction, we can recommend him a luxury credit card)
+# NOTE: for simplicity, only 10 user's summaries are updated
+
+# How to use this
+#          periodicSummaryUpdate()  # call this function to update the summaries every week/month depending on the traffic
+#          getRecommendations("C5533885")  # call this function to get product recommendations for a user based on his transaction summaries
+
+
 import pandas as pd
 import os
 import numpy as np
@@ -30,16 +39,11 @@ def process_transactions(previous_txn_df, credit_card_txn_df):
         whatToDo = "Summarize these set of transactions of the user and try to find patterns and important pattern in the data. The aim is to understand his behavior and summarize that AS PARAGRAPHS"
         user_txn_summary = generateDeepSeekChatBotSummarizer(whatToDo, user_txns.to_dict(orient='records'))
         credit_card_summary = generateDeepSeekChatBotSummarizer(whatToDo, credit_txns.to_dict(orient='records'))
-        # print("USER TRANSACTION SUMMARY")
-        # print(user_txn_summary)
-        # print("CREDIT CARD SUMMARY")
-        # print(credit_card_summary)
         summary_list.append({
             "CustomerID": user,
             "TransactionSummary": user_txn_summary,
             "CreditCardSummary": credit_card_summary
         })
-        # print(summary_list)
         sampleUser -= 1
     
     summary_df = pd.DataFrame(summary_list)
@@ -71,7 +75,7 @@ def getRecommendations(CustomerID):
     '''
     # Query 1 - Based on data create embeddings and find similar embeddings from the vector db
     model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2") # 768
-    embedding = model.encode(data).tolist()  # Convert to list
+    embedding = model.encode(data).tolist() 
 
     with open("../apiKey/pineconeAPI.txt", "r") as file:
         PINECONE_API_KEY = file.read().strip()
@@ -102,5 +106,5 @@ def getRecommendations(CustomerID):
     print(recommendedProductsAnswer) # take this answer and display in ui
 
 
-# periodicSummaryUpdate()  -> call this function to update the summaries
-getRecommendations("C5533885") # -> call this function to get recommendations for a user based on his transaction summaries
+# periodicSummaryUpdate() # -> call this function to update the summaries
+# getRecommendations("C5533885") # -> call this function to get recommendations for a user based on his transaction summaries

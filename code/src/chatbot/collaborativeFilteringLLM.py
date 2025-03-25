@@ -1,4 +1,18 @@
 # Collaborative filtering using LLM and Embeddings
+
+# Summary: 
+#   - Objective: This action can be used to generate product recommendations for a given user based on the similarity with other users.
+#   - The user's personal characteristics like Age, Income etc. are used to find similar users.
+#   - Based on the set of similar users, we will try to get the products similar to the user characteristics (If the occupation is student, we can suggest something like student credit cards)
+#   - The user profiles and the similar products are then passed to the DeepSeek Chatbot to generate the final refined recommendations.
+
+# How to use this,
+#          from collaborativeFilteringLLM import collaborativeFiltering
+#          collaborativeFiltering("C1015616")  # customer ID as string
+
+# UI Page - Should be shown in the recommendations Page of the application
+
+
 import sys
 import numpy as np
 import pandas as pd
@@ -15,7 +29,6 @@ def generateUserQuery(similarUsers, CustomerID):
     df = pd.read_csv("../data/enriched_accounts_new_individual_components.csv")
     # similarUsersRecords = df[df['CustomerID'].isin(similarUsers) & (df['CustomerID'] != CustomerID)]
     similarUsersRecords = df[df['CustomerID'].isin(similarUsers)]
-    # Formatting the text
     output_text = f"THESE ARE THE SET OF USERS WHO ARE SIMILAR TO CUSTOMER {CustomerID}:\n\n{{\n"
     ind = 0
     for index, row in similarUsersRecords.iterrows():
@@ -42,6 +55,7 @@ def collaborativeFiltering(CustomerID):
     model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2") # 768
     embedding = model.encode(query).tolist()  # Convert to list
 
+    # Query Pinecone
     with open("../apiKey/pineconeAPI.txt", "r") as file:
         PINECONE_API_KEY = file.read().strip()
 
@@ -49,7 +63,6 @@ def collaborativeFiltering(CustomerID):
     index_name = "banking-services-and-products-recommendations"
 
     index = pc.Index(index_name)
-    # Query Pinecone
     results = index.query(
         vector=embedding,
         top_k=7,
@@ -71,4 +84,4 @@ def collaborativeFiltering(CustomerID):
 
 
 # Sample query
-collaborativeFiltering("C1015616")
+# collaborativeFiltering("C1015616")
