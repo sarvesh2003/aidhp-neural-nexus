@@ -1,3 +1,5 @@
+# HELPER FUNCTION USED FOR SUMMARIZATION PURPOSE
+
 import os
 from langchain_huggingface import HuggingFaceEndpoint
 from environmentVariableSetup import setEnvironmentVariables
