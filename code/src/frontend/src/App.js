@@ -5,6 +5,7 @@ import Home from './components/Home';
 // import Chatbot from './components/Chatbot'; // Create this component if not already created
 import Transactions from './components/Transactions';
 import Recommendations from './components/Recommendations';
+import Chatbot from './components/Chatbot'
 
 function App() {
     return (
@@ -13,7 +14,7 @@ function App() {
             <div className="main-content">
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    {/* <Route path="/chatbot" element={<Chatbot />} /> */}
+                    <Route path="/chatbot" element={<Chatbot />} />
                     <Route path="/transactions" element={<Transactions />} />
                     <Route path="/recommendations" element={<Recommendations />} />
                 </Routes>

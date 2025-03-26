@@ -16,6 +16,7 @@ def askQuestion(question):
     answer = generateDeepSeekChatBotResponse(question)
     print("Answer by DeepSeek Chatbot: ")
     print(answer)
+    # return answer
     # Query 2
     prompt = f'''
             THE USER ASKED: {question} and THE CHATBOT answered: {answer}. Summarize this into a single paragraph
@@ -46,6 +47,10 @@ def askQuestion(question):
 
     IF YOU FEEL THAT IT IS NOT RELEVEANT, JUST SAY 'YOU CAN CHECK OUT ABOUT DIFFERENT PRODUCTS IN OUR WEBSITE
     '''
+
     recommendedProductsAnswer = generateDeepSeekChatBotResponse(recommendationPrompt)
     print("Recommendations by DeepSeek Chatbot: ")
     print(recommendedProductsAnswer) # take this answer and display in ui
+    # return recommendedProductsAnswer
+    return answer
+    
