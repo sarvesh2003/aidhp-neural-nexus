@@ -205,7 +205,22 @@ def get_col_recommendations():
     except Exception as e:
         print(f"Error reading recommendations: {e}")
         return jsonify({'error': 'An error occurred while fetching recommendations'}), 500
-    
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../chatbot")))
+
+from question_answering_chatbot import askQuestion
+
+
+@app.route('/predict', methods=['POST'])
+def get_prediction():
+    data = request.json
+    text_input = data.get("text")
+
+    if not text_input:
+        return jsonify({"error": "No input text provided"}), 400
+
+    prediction = askQuestion(text_input)
+    return jsonify({"prediction": prediction}) 
 
 
 if __name__ == '__main__':
