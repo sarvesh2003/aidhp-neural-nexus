@@ -104,6 +104,7 @@ def getRecommendations(CustomerID):
     recommendedProductsAnswer = generateDeepSeekChatBotResponse(recommendationPrompt)
     print("Recommendations by DeepSeek Chatbot: ")
     print(recommendedProductsAnswer) # take this answer and display in ui
+    return recommendedProductsAnswer
 
 
 # periodicSummaryUpdate() # -> call this function to update the summaries

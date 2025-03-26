@@ -3,10 +3,14 @@ import os
 from datetime import datetime
 from flask import request, jsonify
 from config import app
+import sys
+import pandas as pd
+import numpy as np
 
 # ------------------------------------------------------------------------------------------
 # TRANSACTIONS ENDPOINTS
 # ------------------------------------------------------------------------------------------
+
 
 CREDIT_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'creditCardTransactions.csv')
 DEBIT_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'previousTransactionHistory.csv')
@@ -21,6 +25,29 @@ def get_latest_transaction(user_id):
     except FileNotFoundError:
         return None
     return None
+
+def addRecommendationsToCSV(rec, user_id):
+
+    RECOMMENDATIONS_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'recommendations.csv')
+    os.makedirs(os.path.dirname(RECOMMENDATIONS_CSV_FILE_PATH), exist_ok=True)
+
+    data_to_append = {
+        "userID": user_id,
+        "recommendations": rec
+    }
+
+    file_exists = os.path.isfile(RECOMMENDATIONS_CSV_FILE_PATH)
+
+    with open(RECOMMENDATIONS_CSV_FILE_PATH, mode='a', newline='', encoding='utf-8') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=["userID", "recommendations"])
+        
+        if not file_exists:
+            writer.writeheader()
+        
+        writer.writerow(data_to_append)
+
+    # Optionally, create a DataFrame for further processing
+    df = pd.DataFrame([data_to_append])
 
 @app.route('/api/transactions', methods=['POST'])
 def add_transaction():
@@ -86,6 +113,14 @@ def add_transaction():
                     debit_time,
                     f"{amount:.2f}"
                 ])
+            # Adding Recommendation call
+            print(os.path.dirname(__file__))
+            sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../chatbot')))
+            from periodicDataSummarization import getRecommendations
+            # sys.path.append(os.path.abspath(os.path.join(os.path.dirname("../"), '..')))
+            rec = getRecommendations(user_id)
+            addRecommendationsToCSV(rec, user_id)
+
             return jsonify({'message': 'Debit card transaction added successfully'}), 201
         except Exception as e:
             print(f"Error processing debit transaction: {e}")
@@ -138,18 +173,18 @@ def get_transactions():
 # ------------------------------------------------------------------------------------------
 
 BANK_LOANS_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'ProductsData', 'bank_loans.csv')
+RECOMMENDATIONS_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'recommendations.csv')
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_recommendations():
     recommendations = []
     print(f"Reading recommendations from {BANK_LOANS_CSV_FILE_PATH}")
     try:
-        with open(BANK_LOANS_CSV_FILE_PATH, 'r') as csvfile:
+        with open(RECOMMENDATIONS_CSV_FILE_PATH, 'r') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 recommendations.append({
-                    'product': row['Product Name'],
-                    'description': row['Description']
+                    'recommendations': row['recommendations']
                 })
         return jsonify(recommendations), 200
     except FileNotFoundError:
@@ -157,6 +192,21 @@ def get_recommendations():
     except Exception as e:
         print(f"Error reading recommendations: {e}")
         return jsonify({'error': 'An error occurred while fetching recommendations'}), 500
+
+@app.route('/api/collaborativeRec', methods=['GET'])
+def get_col_recommendations():
+    user_id = request.args.get('user')
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../chatbot')))
+    from collaborativeFilteringLLM import collaborativeFiltering
+    try:
+        rec = collaborativeFiltering(user_id)
+        addRecommendationsToCSV(rec, user_id)
+        return jsonify(rec)
+    except Exception as e:
+        print(f"Error reading recommendations: {e}")
+        return jsonify({'error': 'An error occurred while fetching recommendations'}), 500
     
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -15,3 +15,6 @@ faker
 openpyxl 
 pinecone
 sentence-transformers
+flask
+flask_sqlalchemy
+flask_cors

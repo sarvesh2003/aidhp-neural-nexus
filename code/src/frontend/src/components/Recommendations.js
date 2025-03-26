@@ -6,6 +6,8 @@ const Recommendations = () => {
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userId, setUserId] = useState('');
+    const [submitStatus, setSubmitStatus] = useState(null);
 
     useEffect(() => {
         const fetchRecommendations = async () => {
@@ -22,6 +24,19 @@ const Recommendations = () => {
 
         fetchRecommendations();
     }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitStatus('Submitting...');
+        try {
+            const response = await axios.get(`http://localhost:5000/api/collaborativeRec?user=${userId}`);
+            setSubmitStatus('Submitted successfully!');
+            console.log('Response:', response.data);
+        } catch (err) {
+            console.error('Error submitting UserID:', err);
+            setSubmitStatus('Failed to submit. Please try again.');
+        }
+    };
 
     if (loading) {
         return (
@@ -47,8 +62,7 @@ const Recommendations = () => {
                     recommendations.map((rec, index) => (
                         <RecommendationCard 
                             key={index}
-                            product={rec.product}
-                            description={rec.description}
+                            recommendations={rec.recommendations}
                             index={index}
                         />
                     ))
@@ -58,11 +72,32 @@ const Recommendations = () => {
                     </div>
                 )}
             </div>
+            
+            {/* Add the form at the bottom center */}
+            <div className="user-id-form-container">
+                <form onSubmit={handleSubmit} className="user-id-form">
+                    <div className="form-group">
+                        <label htmlFor="userId">UserID:</label>
+                        <input
+                            type="text"
+                            id="userId"
+                            value={userId}
+                            onChange={(e) => setUserId(e.target.value)}
+                            placeholder="Enter your UserID"
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="submit-btn">
+                        Submit
+                    </button>
+                    {submitStatus && <div className="submit-status">{submitStatus}</div>}
+                </form>
+            </div>
         </div>
     );
 };
 
-const RecommendationCard = ({ product, description, index }) => {
+const RecommendationCard = ({ recommendations, index }) => {
     const colors = [
         'linear-gradient(135deg, #ff4e50, #f9d423)',
         'linear-gradient(135deg, #ff416c, #ff4b2b)',
@@ -76,8 +111,7 @@ const RecommendationCard = ({ product, description, index }) => {
             style={{ background: colors[index % colors.length] }}
         >
             <div className="card-content">
-                <h3 className="product-title">{product}</h3>
-                <p className="product-desc">{description}</p>
+                <p className="product-desc">{recommendations}</p>
             </div>
             <div className="card-actions">
                 <button className="action-btn">Learn More</button>
