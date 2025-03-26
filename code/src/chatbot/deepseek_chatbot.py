@@ -130,6 +130,36 @@ def generateDeepSeekChatBotSummarizer(whatToDo, data):
     # print(completion.choices[0].message.content.split("</think>", 1)[1])
     return completion.choices[0].message.content.split("</think>", 1)[1]
 
+def generateDeepSeekChatBotTopicExtractor(whatToDo, data):
+    # Setting environment variables
+    if(os.getenv("HUGGINGFACE_KEY") == None):
+        print("HUGGINGFACE_KEY environment variable is None")
+        setEnvironmentVariables()
+        print("HUGGINGFACE_KEY environment variable is set to the value in the file")
+
+    client = InferenceClient(
+        provider="novita",
+        api_key=os.getenv("HUGGINGFACE_KEY"),
+    )
+
+    template = f""" TASK: {whatToDo}
+                    TEXT: {data}  
+                    **Answer:** 
+                    """
+
+    completion = client.chat.completions.create(
+        model="deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+        messages=[
+            {
+                "role": "system",
+                "content": template
+            }
+        ],
+        max_tokens=2000,
+    )
+    # print(completion.choices[0].message.content.split("</think>", 1)[1])
+    return completion.choices[0].message.content.split("</think>", 1)[1]
+
 
 
 # generateDeepSeekChatBotResponse("who will win IPL 2025 ? CSK or MI ?")
